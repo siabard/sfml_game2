@@ -1,6 +1,7 @@
 #ifndef __GAME_HPP__
 #define __GAME_HPP__
 #include "player.hpp"
+#include "swagball.hpp"
 
 class Game{
 private:
@@ -9,6 +10,12 @@ private:
   bool endGame;
   sf::Event sfmlEvent;
   Player player;
+
+  std::vector<SwagBall> swagBalls;
+
+  float spawnTimer;
+  float spawnTimerMax;
+  int maxSwagBalls;
 
   void initVariables();
   void initWindow();
@@ -24,6 +31,7 @@ public:
   // modifiers
 
   // functions
+  void spawnSwagBalls();
   void pollEvents();
   void update();
   void render();
