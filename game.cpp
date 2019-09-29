@@ -5,6 +5,7 @@ void Game::initVariables() {
   this->spawnTimer = 0.f;
   this->spawnTimerMax = 10.f;
   this->maxSwagBalls = 10;
+  this->points = 0;
 
 }
 
@@ -14,11 +15,27 @@ void Game::initWindow() {
   this->window->setFramerateLimit(60);
 }
 
+void Game::initFont() {
+  if(!this->font.loadFromFile("fonts/DroidSans.ttf")) {
+    std::cout << "ERROR::GAME::INITFONT::CANNOT OPEN FONT DroidSans.ttf" << std::endl;
+  }
+
+}
+
+void Game::initText() {
+  this->guiText.setFont(this->font);
+  this->guiText.setFillColor(sf::Color::White);
+  this->guiText.setCharacterSize(24);
+  this->guiText.setString("test");
+}
+
 // constructor & destructor
 
 Game::Game() {
   this->initVariables();
   this->initWindow();
+  this->initFont();
+  this->initText();
 }
 
 Game::~Game() {
@@ -70,10 +87,36 @@ void Game::pollEvents() {
   }
 }
 
+void Game::updateCollision() {
+  // check collision
+  for(size_t i = 0; i < this->swagBalls.size(); i++) {
+    if(this->player.getShape().getGlobalBounds().intersects(this->swagBalls[i].getShape().getGlobalBounds())) {
+      this->swagBalls.erase(this->swagBalls.begin() + i);
+      this->points++;
+      break;
+    }
+  }
+
+}
+
+void Game::updateGui() {
+  std::stringstream ss;
+
+  ss << " Points: " << this->points;
+
+  this->guiText.setString(ss.str());
+}
+
 void Game::update() {
   this->pollEvents();
   this->spawnSwagBalls();
   this->player.update(this->window);
+  this->updateCollision();
+  this->updateGui();
+}
+
+void Game::renderGui(sf::RenderTarget* target) {
+  target->draw(this->guiText);
 }
 
 void Game::render() {
@@ -86,6 +129,10 @@ void Game::render() {
   for(auto i : this->swagBalls) {
     i.render(*this->window);
   }
+
+
+  // render gui
+  this->renderGui(this->window);
 
   this->window->display();
 }

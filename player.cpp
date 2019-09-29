@@ -2,7 +2,9 @@
 #include "include/player.hpp"
 
 void Player::initVariables() {
-  this->movementSpeed = 10.f;
+  this->movementSpeed = 5.f;
+  this->hpMax = 10;
+  this->hp = this->hpMax;
 }
 
 void Player::initShape() {
@@ -20,16 +22,22 @@ Player::Player(float x, float y) {
 
 Player::~Player() {}
 
+const sf::RectangleShape& Player::getShape() const {
+  return this->shape;
+}
 
 void Player::updateInput() {
   // Left
   if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
     this->shape.move( -this->movementSpeed, 0);
-  } else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+  }
+  if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
     this->shape.move( this->movementSpeed, 0);
-  } else if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+  }
+  if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
     this->shape.move( 0, -this->movementSpeed);
-  } else if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+  }
+  if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
       this->shape.move( 0, this->movementSpeed);
   }
 }

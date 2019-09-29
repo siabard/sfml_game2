@@ -11,6 +11,11 @@ private:
   sf::Event sfmlEvent;
   Player player;
 
+  int points;
+
+  sf::Font font;
+  sf::Text guiText;
+
   std::vector<SwagBall> swagBalls;
 
   float spawnTimer;
@@ -19,6 +24,8 @@ private:
 
   void initVariables();
   void initWindow();
+  void initFont();
+  void initText();
 
 public:
   // constructor & destructor
@@ -33,7 +40,10 @@ public:
   // functions
   void spawnSwagBalls();
   void pollEvents();
+  void updateCollision();
+  void updateGui();
   void update();
+  void renderGui(sf::RenderTarget* target);
   void render();
 };
 
