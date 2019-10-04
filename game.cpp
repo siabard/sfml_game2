@@ -27,6 +27,13 @@ void Game::initText() {
   this->guiText.setFillColor(sf::Color::White);
   this->guiText.setCharacterSize(24);
   this->guiText.setString("test");
+
+  // end game text
+  this->endGameText.setFont(this->font);
+  this->endGameText.setFillColor(sf::Color::Red);
+  this->endGameText.setCharacterSize(60);
+  this->endGameText.setPosition(sf::Vector2f(20, 300));
+  this->endGameText.setString("Game Over");
 }
 
 // constructor & destructor
@@ -50,9 +57,27 @@ const bool Game::running() const {
   return this->window->isOpen();
 }
 
+const bool Game::getEndGame() const {
+  return this->endGame;
+}
+
 // modifiers
 
 // functions
+const int Game::randBallType() const {
+  int type = SwagBallType::DEFAULT;
+
+  int randValue = rand() % 100 + 1;
+
+  if (randValue >= 60 && randValue < 80) {
+    type = SwagBallType::DAMAGING;
+  } else if (randValue > 80) {
+    type = SwagBallType::HEALING;
+  }
+
+  return type;
+}
+
 void Game::spawnSwagBalls() {
   // Timer
   if (this->spawnTimer < this->spawnTimerMax) {
@@ -60,7 +85,7 @@ void Game::spawnSwagBalls() {
   } else {
     // Spawn Ball
     if(this->swagBalls.size() < this->maxSwagBalls) {
-      this->swagBalls.push_back(SwagBall(*this->window, rand() % SwagBallType::NROFTYPES));
+      this->swagBalls.push_back(SwagBall(*this->window, this->randBallType()));
 
       this->spawnTimer = 0.f;
     }
@@ -87,6 +112,14 @@ void Game::pollEvents() {
   }
 }
 
+void Game::updatePlayer() {
+  this->player.update(this->window);
+
+  if(this->player.getHp() <= 0) {
+    this->endGame = true;
+  }
+}
+
 void Game::updateCollision() {
   // check collision
   for(size_t i = 0; i < this->swagBalls.size(); i++) {
@@ -96,7 +129,7 @@ void Game::updateCollision() {
       case SwagBallType::DEFAULT:
         break;
       case SwagBallType::DAMAGING:
-        this->player.takeDamage(1);
+        this->player.takeDamage(9);
         break;
       case SwagBallType::HEALING:
         this->player.gainHealth(1);
@@ -128,10 +161,13 @@ void Game::updateGui() {
 
 void Game::update() {
   this->pollEvents();
-  this->spawnSwagBalls();
-  this->player.update(this->window);
-  this->updateCollision();
-  this->updateGui();
+
+  if(this->endGame == false) {
+    this->spawnSwagBalls();
+    this->updatePlayer();
+    this->updateCollision();
+    this->updateGui();
+  }
 }
 
 void Game::renderGui(sf::RenderTarget* target) {
@@ -152,6 +188,11 @@ void Game::render() {
 
   // render gui
   this->renderGui(this->window);
+
+  // render end text
+  if(this->endGame == true) {
+    this->window->draw(this->endGameText);
+  }
 
   this->window->display();
 }

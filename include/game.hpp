@@ -15,6 +15,7 @@ private:
 
   sf::Font font;
   sf::Text guiText;
+  sf::Text endGameText;
 
   std::vector<SwagBall> swagBalls;
 
@@ -34,12 +35,15 @@ public:
 
   // accessors
   const bool running() const;
+  const bool getEndGame() const;
 
   // modifiers
 
   // functions
+  const int randBallType() const;
   void spawnSwagBalls();
   void pollEvents();
+  void updatePlayer();
   void updateCollision();
   void updateGui();
   void update();
